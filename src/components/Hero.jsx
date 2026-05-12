@@ -1,124 +1,138 @@
 import { motion } from 'framer-motion'
-import { useTheme } from '../context/ThemeContext'
+import { useEffect, useState } from 'react'
+import { FiArrowDown, FiArrowRight, FiMail } from 'react-icons/fi'
+
+const title = 'Software Developer. Researcher. Problem Solver.'
 
 const container = {
   hidden: {},
   show: {
-    transition: { staggerChildren: 0.11, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.12, delayChildren: 0.18 },
   },
 }
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] } },
+  hidden: { opacity: 0, y: 26 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.72, ease: [0.22, 1, 0.36, 1] },
+  },
 }
 
 export default function Hero() {
-  const { dark } = useTheme()
+  const [typedTitle, setTypedTitle] = useState('')
+
+  useEffect(() => {
+    let index = 0
+    let direction = 1
+    let interval
+    let timeout
+
+    const startTyping = () => {
+      interval = window.setInterval(() => {
+        index += direction
+        setTypedTitle(title.slice(0, index))
+
+        if (index === title.length) {
+          direction = -1
+          window.clearInterval(interval)
+          timeout = window.setTimeout(startTyping, 1700)
+        }
+
+        if (index === 0 && direction === -1) {
+          direction = 1
+          window.clearInterval(interval)
+          timeout = window.setTimeout(startTyping, 450)
+        }
+      }, 42)
+    }
+
+    timeout = window.setTimeout(startTyping, 520)
+
+    return () => {
+      window.clearTimeout(timeout)
+      window.clearInterval(interval)
+    }
+  }, [])
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 -z-10">
-        <div
-          className={`absolute inset-0 opacity-50 ${
-            dark ? 'bg-grid-dark' : 'bg-grid-light'
-          }`}
-        />
-        {/* Gradient mask over grid */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/90 to-white dark:from-neutral-950/60 dark:via-neutral-950/90 dark:to-neutral-950" />
+    <section className="relative flex min-h-[82svh] items-start overflow-hidden px-5 pt-28 sm:px-6 sm:pt-32 lg:pt-32">
+      <div className="absolute inset-0 -z-10 bg-grid-light opacity-70 dark:bg-grid-dark dark:opacity-45" />
+      <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-white dark:to-black" />
 
-        {/* Floating orbs */}
-        {/* Orbs: static blur, only opacity pulses — blur+transform together kills perf */}
-        <div className="absolute top-1/4 right-1/3 w-[500px] h-[500px] rounded-full bg-sky-400/20 dark:bg-sky-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/3 left-1/4 w-[380px] h-[380px] rounded-full bg-sky-300/15 dark:bg-sky-600/10 blur-3xl pointer-events-none" />
-      </div>
-
-      <div className="max-w-6xl mx-auto px-6 py-32 text-center">
-        <motion.div variants={container} initial="hidden" animate="show" style={{ willChange: 'opacity, transform' }}>
-          {/* Status badge */}
-          <motion.div variants={fadeUp} className="mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 text-sky-600 dark:text-sky-400 text-xs font-medium tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
-              Open to opportunities
-            </span>
-          </motion.div>
-
-          {/* Name */}
-          <motion.h1
-            variants={fadeUp}
-            className="font-heading font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-neutral-900 dark:text-neutral-50 leading-[1.05] mb-5"
-          >
-            Nana Kwame
-            <br />
-            <span className="text-sky-500">Boateng</span>
-          </motion.h1>
-
-          {/* Title */}
-          <motion.p
-            variants={fadeUp}
-            className="font-heading font-semibold text-lg md:text-xl text-neutral-500 dark:text-neutral-400 mb-5 tracking-wide"
-          >
-            Software Developer
-          </motion.p>
-
-          {/* Tagline */}
-          <motion.p
-            variants={fadeUp}
-            className="text-neutral-500 dark:text-neutral-400 text-base md:text-lg max-w-lg mx-auto leading-relaxed mb-10"
-          >
-            Building thoughtful digital experiences from Accra, Ghana —
-            where curiosity meets clean code.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            variants={fadeUp}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3"
-          >
-            <a
-              href="#projects"
-              className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white font-medium text-sm transition-colors duration-200 shadow-lg shadow-sky-500/25 w-full sm:w-auto"
-            >
-              View Projects
-            </a>
-            <a
-              href="#contact"
-              className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 font-medium text-sm transition-colors duration-200 w-full sm:w-auto"
-            >
-              Contact Me
-            </a>
-          </motion.div>
-
-          {/* Location strip */}
-          <motion.div
-            variants={fadeUp}
-            className="mt-16 flex items-center justify-center gap-3 text-neutral-400 dark:text-neutral-600 text-xs tracking-widest uppercase"
-          >
-            <span>Accra, Ghana</span>
-            <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
-            <span>Lancaster University Ghana</span>
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* Scroll indicator */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="mx-auto w-full max-w-6xl pb-24"
       >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="flex flex-col items-center gap-1"
+        <motion.h1
+          variants={fadeUp}
+          className="max-w-5xl font-heading text-5xl font-bold leading-[0.95] text-black sm:text-7xl lg:text-8xl dark:text-white"
         >
-          <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-600">
-            Scroll
-          </span>
-          <div className="w-px h-8 bg-gradient-to-b from-neutral-400 dark:from-neutral-600 to-transparent" />
+          Nana Kwame Boateng
+        </motion.h1>
+
+        <motion.div
+          variants={fadeUp}
+          className="mt-7 min-h-[4rem] max-w-4xl font-heading text-2xl font-semibold leading-tight text-accent sm:min-h-[2.75rem] sm:text-3xl lg:text-4xl"
+          aria-label={title}
+        >
+          <span>{typedTitle}</span>
+          <motion.span
+            animate={{ opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 1, repeat: Infinity }}
+            className="ml-1 inline-block h-7 w-0.5 translate-y-1 bg-accent sm:h-9"
+          />
         </motion.div>
+
+        <motion.p
+          variants={fadeUp}
+          className="mt-7 max-w-2xl text-lg leading-8 text-neutral-700 sm:text-xl dark:text-neutral-300"
+        >
+          Building real software that solves real problems — designed with care and shipped
+          with intent.
+        </motion.p>
+
+        <motion.div variants={fadeUp} className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <a
+            href="#projects"
+            className="inline-flex items-center justify-center gap-2 bg-accent px-6 py-3.5 text-sm font-bold text-white shadow-[0_18px_50px_rgba(225,29,72,0.28)] transition hover:-translate-y-0.5 hover:bg-[#be123c]"
+          >
+            Explore Projects
+            <FiArrowRight size={17} />
+          </a>
+          <a
+            href="#contact"
+            className="inline-flex items-center justify-center gap-2 border border-black px-6 py-3.5 text-sm font-bold text-black transition hover:-translate-y-0.5 hover:border-accent hover:text-accent dark:border-white dark:text-white dark:hover:border-accent-dark dark:hover:text-accent-dark"
+          >
+            <FiMail size={16} />
+            Get In Touch
+          </a>
+        </motion.div>
+
+        <motion.a
+          variants={fadeUp}
+          href="#about"
+          className="mx-auto mt-10 flex w-fit items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-neutral-500 transition hover:text-accent dark:text-neutral-400 dark:hover:text-accent-dark"
+          aria-label="Scroll to About section"
+        >
+          <span className="relative flex h-16 w-6 items-start justify-center rounded-full border border-black/20 dark:border-white/25">
+            <motion.span
+              animate={{ y: [8, 38, 8], opacity: [1, 0.38, 1] }}
+              transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}
+              className="mt-1 h-1.5 w-1.5 rounded-full bg-accent"
+            />
+          </span>
+          <span>Scroll</span>
+          <motion.span
+            animate={{ y: [0, 5, 0] }}
+            transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <FiArrowDown size={14} />
+          </motion.span>
+        </motion.a>
       </motion.div>
     </section>
   )

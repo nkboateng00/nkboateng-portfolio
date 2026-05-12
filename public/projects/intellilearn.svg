@@ -1,0 +1,30 @@
+<svg width="900" height="640" viewBox="0 0 900 640" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">IntelliLearn platform preview</title>
+  <desc id="desc">A study platform interface showing papers, AI explanations, quizzes, and discussion cards.</desc>
+  <rect width="900" height="640" fill="#050505"/>
+  <rect x="58" y="58" width="784" height="524" fill="#fff"/>
+  <rect x="100" y="96" width="188" height="448" fill="#111"/>
+  <text x="126" y="140" fill="#fff" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="26" font-weight="800">IntelliLearn</text>
+  <rect x="126" y="188" width="120" height="14" rx="7" fill="#e11d48"/>
+  <rect x="126" y="228" width="92" height="12" rx="6" fill="#737373"/>
+  <rect x="126" y="264" width="112" height="12" rx="6" fill="#737373"/>
+  <rect x="126" y="300" width="76" height="12" rx="6" fill="#737373"/>
+  <rect x="126" y="480" width="118" height="34" fill="#e11d48"/>
+  <text x="332" y="134" fill="#111" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="34" font-weight="800">Study hub</text>
+  <rect x="332" y="170" width="446" height="80" fill="#fff1f4" stroke="#e11d48"/>
+  <text x="360" y="206" fill="#111" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="18" font-weight="800">AI explanation</text>
+  <rect x="360" y="222" width="312" height="10" rx="5" fill="#ffb199"/>
+  <rect x="332" y="284" width="198" height="168" fill="#f5f5f5" stroke="#e5e5e5"/>
+  <rect x="360" y="318" width="60" height="70" fill="#111"/>
+  <rect x="444" y="322" width="58" height="10" rx="5" fill="#a3a3a3"/>
+  <rect x="444" y="348" width="40" height="10" rx="5" fill="#d4d4d4"/>
+  <rect x="360" y="414" width="124" height="16" rx="8" fill="#e11d48"/>
+  <rect x="558" y="284" width="220" height="168" fill="#111"/>
+  <text x="586" y="326" fill="#fff" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="20" font-weight="800">Quiz score</text>
+  <circle cx="670" cy="382" r="44" stroke="#e11d48" stroke-width="14"/>
+  <text x="648" y="392" fill="#fff" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="24" font-weight="800">86</text>
+  <rect x="332" y="482" width="446" height="62" fill="#fafafa" stroke="#e5e5e5"/>
+  <circle cx="366" cy="513" r="12" fill="#e11d48"/>
+  <rect x="396" y="500" width="258" height="11" rx="5.5" fill="#a3a3a3"/>
+  <rect x="396" y="522" width="188" height="9" rx="4.5" fill="#d4d4d4"/>
+</svg>

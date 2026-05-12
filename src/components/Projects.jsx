@@ -1,109 +1,157 @@
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { FiArrowUpRight } from 'react-icons/fi'
 
-const PROJECTS = [
+const projects = [
   {
-    type: 'Web App',
-    name: 'CampusFix',
+    title: 'CampusFix',
     description:
-      'A campus maintenance ticketing system that streamlines issue reporting and resolution. Features OTP-based registration, automated WhatsApp notifications to technicians, and CSV import/export for admin workflows.',
-    tags: ['Laravel', 'PHP', 'MySQL'],
+      'A full-stack campus maintenance ticketing application built with Laravel 11 for Lancaster University Ghana. Students and staff can report issues, track ticket progress, receive OTP-secured access, and keep technicians updated through WhatsApp notifications and CSV-powered admin workflows.',
+    impact:
+      'Streamlining maintenance requests for staff and students at Lancaster University Ghana.',
+    tags: ['Laravel', 'PHP', 'MySQL', 'WhatsApp API'],
+    image: '/projects/campusfix.png',
+    link: 'https://lugcampusfix.online',
+    linkLabel: 'Visit site',
   },
   {
-    type: 'Platform',
-    name: 'IntelliLearn',
+    title: 'IntelliLearn',
     description:
-      'An educational platform tailored for Lancaster University Ghana students — past exam papers, AI-powered explanations, quizzes, and discussion forums. Built with OTP auth and Cloudflare R2 for secure document storage.',
-    tags: ['React', 'Node.js', 'Cloudflare'],
+      'An educational platform for LUG students with past exam papers, AI explanations, quizzes, answer submissions, and a discussion-first learning flow. It gives students a cleaner way to find resources, revise faster, and learn with context.',
+    impact: 'Giving LUG students smarter access to study resources.',
+    tags: ['React', 'Node.js', 'Cloudflare R2'],
+    image: '/projects/intellilearn.png',
+    link: 'https://intellilearnlug.com',
+    linkLabel: 'Visit site',
   },
   {
-    type: 'Web App',
-    name: 'De Keuken',
+    title: 'De Keuken',
     description:
-      'A restaurant website with a live reservation management system and real-time WhatsApp Cloud API notifications, keeping kitchen and front-of-house staff instantly informed of new bookings.',
-    tags: ['Next.js', 'WhatsApp API', 'Vercel'],
+      'A polished restaurant website for De Keuken in Accra, built around a warm visual identity, live reservations, menu exploration, and WhatsApp Cloud API booking notifications for the team.',
+    impact: 'Live for a real restaurant client in Accra.',
+    tags: ['Next.js', 'WhatsApp Cloud API', 'Vercel', 'GA4'],
+    image: '/projects/de-keuken.png',
+    link: 'https://dekeukengh.com',
+    linkLabel: 'Visit site',
   },
   {
-    type: 'Publication',
-    name: 'iCAD 2026 Research Paper',
+    title: 'SpotCheck',
     description:
-      '"Reimagining SME Automation: Leveraging Agentic AI for Increased Productivity Among Local Businesses in Accra." Accepted at iCAD 2026 at Anglia Ruskin University, Cambridge.',
-    tags: ['Research', 'Agentic AI', 'n8n'],
+      'A smart classroom availability agent using a Raspberry Pi 4 and GPT-4o-mini vision to detect room occupancy in real time. The goal is to help students find free classrooms quickly without walking from block to block.',
+    impact: 'Helping students find free classrooms in real time.',
+    tags: ['Raspberry Pi', 'Python', 'Flask', 'GPT-4o-mini'],
+    image: '/projects/spotcheck.svg',
+    link: 'https://github.com/nkboateng00/spotcheck',
+    linkLabel: 'View project',
   },
 ]
 
-function ProjectCard({ project, index, inView }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
-      className="group relative flex flex-col bg-neutral-50 dark:bg-neutral-900/60 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 hover:border-sky-300/60 dark:hover:border-sky-800/60 transition-all duration-300 hover:shadow-xl hover:shadow-sky-500/5 cursor-default"
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <span className="text-[10px] font-semibold text-sky-500 uppercase tracking-widest">
-            {project.type}
-          </span>
-          <h3 className="font-heading font-bold text-xl text-neutral-900 dark:text-neutral-50 mt-1 leading-tight">
-            {project.name}
-          </h3>
-        </div>
-        <div className="mt-1 w-8 h-8 rounded-full border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-neutral-400 group-hover:text-sky-500 group-hover:border-sky-300/60 dark:group-hover:border-sky-700/60 transition-all duration-200 shrink-0">
-          <FiArrowUpRight size={14} />
-        </div>
-      </div>
+const sectionMotion = {
+  initial: { opacity: 0, y: 34 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.18 },
+  transition: { duration: 0.68, ease: [0.22, 1, 0.36, 1] },
+}
 
-      <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed flex-1 mb-5">
+function BrowserFrame({ project }) {
+  return (
+    <motion.a
+      href={project.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      whileHover={{ y: -8 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+      className="group block overflow-hidden rounded-b-2xl rounded-t-[1.35rem] border border-black/10 bg-white shadow-[0_18px_50px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-neutral-950 dark:shadow-[0_18px_50px_rgba(0,0,0,0.45)]"
+      aria-label={`Open ${project.title}`}
+    >
+      <div className="flex h-12 items-center gap-2 border-b border-black/10 bg-neutral-50 px-6 dark:border-white/10 dark:bg-neutral-900">
+        <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+        <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
+        <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+      </div>
+      <div className="bg-white p-4 dark:bg-neutral-950 sm:p-6">
+        <img
+          src={project.image}
+          alt={`${project.title} website screenshot`}
+          className="aspect-[16/9] w-full object-cover object-top transition duration-500 group-hover:scale-[1.015]"
+          loading="lazy"
+        />
+      </div>
+    </motion.a>
+  )
+}
+
+function ProjectText({ project }) {
+  return (
+    <div className="flex max-w-xl flex-col justify-center">
+      <h3 className="font-heading text-4xl font-semibold leading-tight text-black dark:text-white">
+        {project.title}
+      </h3>
+      <p className="mt-6 text-lg font-medium leading-9 text-neutral-700 dark:text-neutral-300">
         {project.description}
       </p>
-
-      <div className="flex flex-wrap gap-2">
+      <p className="mt-5 border-l-2 border-accent pl-4 text-sm font-bold italic leading-6 text-accent">
+        {project.impact}
+      </p>
+      <div className="mt-6 flex flex-wrap gap-2">
         {project.tags.map(tag => (
           <span
             key={tag}
-            className="px-2.5 py-1 text-xs font-medium rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400"
+            className="border border-black/10 px-3 py-1.5 text-xs font-bold text-neutral-700 dark:border-white/10 dark:text-neutral-300"
           >
             {tag}
           </span>
         ))}
       </div>
-    </motion.div>
+      <a
+        href={project.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-8 inline-flex w-fit items-center gap-1 border-b border-black pb-1 text-base font-bold text-black transition hover:border-accent hover:text-accent dark:border-white dark:text-white dark:hover:border-accent-dark dark:hover:text-accent-dark"
+      >
+        {project.linkLabel}
+        <FiArrowUpRight size={17} />
+      </a>
+    </div>
   )
 }
 
 export default function Projects() {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-100px' })
-
   return (
-    <section
-      id="projects"
-      className="py-28 px-6 bg-neutral-50/60 dark:bg-neutral-900/20"
-    >
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 28 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <p className="text-sky-500 font-medium text-xs uppercase tracking-widest mb-3">
+    <motion.section id="projects" className="px-5 py-24 sm:px-6" {...sectionMotion}>
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-16 max-w-2xl">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
             Work
           </p>
-          <h2 className="font-heading font-bold text-4xl md:text-5xl text-neutral-900 dark:text-neutral-50 leading-tight">
-            Selected <span className="text-sky-500">projects</span>
+          <h2 className="font-heading text-4xl font-bold leading-tight text-black sm:text-5xl dark:text-white">
+            Projects
           </h2>
-        </motion.div>
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-5">
-          {PROJECTS.map((project, i) => (
-            <ProjectCard key={project.name} project={project} index={i} inView={inView} />
-          ))}
+        <div className="space-y-24 lg:space-y-32">
+          {projects.map((project, index) => {
+            const imageFirst = index % 2 === 0
+
+            return (
+              <motion.article
+                key={project.title}
+                initial={{ opacity: 0, y: 34 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.24 }}
+                transition={{ duration: 0.68, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+                className="grid items-center gap-10 md:grid-cols-2 md:gap-14 xl:gap-20"
+              >
+                <div className={imageFirst ? 'md:order-1' : 'md:order-2'}>
+                  <BrowserFrame project={project} />
+                </div>
+                <div className={imageFirst ? 'md:order-2' : 'md:order-1'}>
+                  <ProjectText project={project} />
+                </div>
+              </motion.article>
+            )
+          })}
         </div>
       </div>
-    </section>
+    </motion.section>
   )
 }

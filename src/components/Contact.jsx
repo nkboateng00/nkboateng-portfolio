@@ -1,169 +1,109 @@
-import { useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { FiGithub, FiLinkedin, FiMail } from 'react-icons/fi'
-
-const SOCIAL = [
-  {
-    label: 'GitHub',
-    href: 'https://github.com/nkboateng',
-    icon: FiGithub,
-  },
-  {
-    label: 'LinkedIn',
-    href: 'https://linkedin.com/in/nkboateng',
-    icon: FiLinkedin,
-  },
-  {
-    label: 'Email',
-    href: 'mailto:lovkwame05@gmail.com',
-    icon: FiMail,
-  },
-]
+import { motion } from 'framer-motion'
+import { FiGithub, FiLinkedin, FiMail, FiSend } from 'react-icons/fi'
 
 const inputClass =
-  'w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-600 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-400 dark:focus:border-sky-600 transition-colors duration-200'
+  'w-full border border-black/10 bg-white px-4 py-3.5 text-sm font-medium text-black outline-none transition placeholder:text-neutral-400 focus:border-accent focus:ring-4 focus:ring-accent/10 dark:border-white/10 dark:bg-black dark:text-white dark:placeholder:text-neutral-600'
+
+const socials = [
+  { label: 'GitHub', href: 'https://github.com/nkboateng00', icon: FiGithub },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/nkboateng', icon: FiLinkedin },
+]
+
+const sectionMotion = {
+  initial: { opacity: 0, y: 34 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.22 },
+  transition: { duration: 0.68, ease: [0.22, 1, 0.36, 1] },
+}
 
 export default function Contact() {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-100px' })
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
-
-  const handleChange = e =>
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
-
-  const handleSubmit = e => {
-    e.preventDefault()
-    const { name, email, message } = form
-    const subject = encodeURIComponent(`Portfolio contact from ${name}`)
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\n${message}`
-    )
-    window.location.href = `mailto:lovkwame05@gmail.com?subject=${subject}&body=${body}`
-  }
-
   return (
-    <section id="contact" className="py-28 px-6">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 28 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <p className="text-sky-500 font-medium text-xs uppercase tracking-widest mb-3">
+    <motion.section
+      id="contact"
+      className="border-t border-black/10 bg-neutral-50 px-5 py-24 dark:border-white/10 dark:bg-neutral-950 sm:px-6"
+      {...sectionMotion}
+    >
+      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
             Contact
           </p>
-          <h2 className="font-heading font-bold text-4xl md:text-5xl text-neutral-900 dark:text-neutral-50 leading-tight">
-            Let's <span className="text-sky-500">connect</span>
+          <h2 className="font-heading text-4xl font-bold leading-tight text-black sm:text-5xl dark:text-white">
+            Get In Touch
           </h2>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-16">
-          {/* Left: copy + socials */}
-          <motion.div
-            initial={{ opacity: 0, x: -28 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="space-y-8"
+          <p className="mt-6 text-lg text-neutral-700 dark:text-neutral-300">
+            I usually reply within 24 hours.
+          </p>
+          <a
+            href="mailto:nkboateng0@icloud.com"
+            className="mt-5 inline-flex items-center gap-2 text-base font-bold text-black transition hover:text-accent dark:text-white dark:hover:text-accent-dark"
           >
-            <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed text-[0.95rem]">
-              I'm always open to interesting conversations, collaboration
-              opportunities, or just a friendly hello. Whether it's a project
-              idea, research topic, or internship opportunity — reach out.
-            </p>
+            <FiMail size={18} />
+            nkboateng0@icloud.com
+          </a>
 
-            <div className="flex flex-wrap gap-3">
-              {SOCIAL.map(({ label, href, icon: Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target={label !== 'Email' ? '_blank' : undefined}
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:border-sky-300 dark:hover:border-sky-700 hover:text-sky-500 dark:hover:text-sky-400 transition-colors duration-200 text-sm font-medium"
-                >
-                  <Icon size={15} />
-                  {label}
-                </a>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Right: form */}
-          <motion.form
-            initial={{ opacity: 0, x: 28 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.25 }}
-            onSubmit={handleSubmit}
-            className="space-y-4"
-          >
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1.5"
-                >
-                  Name
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Your name"
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1.5"
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="your@email.com"
-                  className={inputClass}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="message"
-                className="block text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1.5"
+          <div className="mt-8 flex gap-3">
+            {socials.map(({ label, href, icon: Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="grid h-11 w-11 place-items-center border border-black/10 bg-white text-black transition hover:border-accent hover:bg-accent hover:text-white dark:border-white/10 dark:bg-black dark:text-white"
               >
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                required
-                rows={5}
-                value={form.message}
-                onChange={handleChange}
-                placeholder="What's on your mind?"
-                className={`${inputClass} resize-none`}
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white font-medium text-sm transition-colors duration-200 shadow-lg shadow-sky-500/20"
-            >
-              Send Message
-            </button>
-          </motion.form>
+                <Icon size={19} />
+              </a>
+            ))}
+          </div>
         </div>
+
+        <motion.form
+          initial={{ opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.6, delay: 0.08 }}
+          action="https://formspree.io/f/YOUR_FORMSPREE_ENDPOINT"
+          method="POST"
+          className="border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-black sm:p-7"
+        >
+          {/* Replace YOUR_FORMSPREE_ENDPOINT with Nana's Formspree form ID before going live. */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+                Name
+              </span>
+              <input className={inputClass} type="text" name="name" required placeholder="Your name" />
+            </label>
+            <label className="block">
+              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+                Email
+              </span>
+              <input className={inputClass} type="email" name="email" required placeholder="you@example.com" />
+            </label>
+          </div>
+
+          <label className="mt-4 block">
+            <span className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+              Message
+            </span>
+            <textarea
+              className={`${inputClass} min-h-40 resize-y`}
+              name="message"
+              required
+              placeholder="Tell me what you're building."
+            />
+          </label>
+
+          <button
+            type="submit"
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 bg-accent px-6 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#be123c]"
+          >
+            Submit
+            <FiSend size={16} />
+          </button>
+        </motion.form>
       </div>
-    </section>
+    </motion.section>
   )
 }

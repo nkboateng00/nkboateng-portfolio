@@ -8,18 +8,20 @@
   }
 
   body {
-    @apply antialiased;
+    @apply antialiased bg-white text-neutral-950 dark:bg-black dark:text-white;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0;
   }
 }
 
 @layer utilities {
   .bg-grid-light {
-    background-image: linear-gradient(to right, #e5e5e5 1px, transparent 1px),
-      linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
+    background-image: linear-gradient(to right, #eeeeee 1px, transparent 1px),
+      linear-gradient(to bottom, #eeeeee 1px, transparent 1px);
     background-size: 64px 64px;
   }
 
@@ -27,5 +29,13 @@
     background-image: linear-gradient(to right, #262626 1px, transparent 1px),
       linear-gradient(to bottom, #262626 1px, transparent 1px);
     background-size: 64px 64px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .tilt-card {
+    transform-style: preserve-3d;
   }
 }

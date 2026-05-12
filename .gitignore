@@ -2,3 +2,10 @@ node_modules
 dist
 .DS_Store
 *.local
+.local/
+.vercel
+
+# Local source screenshots copied into public/projects/
+/Campusfix.png
+/De Keuken.png
+/Intellilearn.png

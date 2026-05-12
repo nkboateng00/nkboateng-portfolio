@@ -1,96 +1,101 @@
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiSun, FiMoon, FiMenu, FiX } from 'react-icons/fi'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { FiMenu, FiMoon, FiSun, FiX } from 'react-icons/fi'
 import { useTheme } from '../context/ThemeContext'
 
-const NAV_LINKS = ['About', 'Projects', 'Contact']
+const NAV_LINKS = ['About', 'Projects', 'Research', 'Contact']
 
-export default function Navbar() {
+export default function Navbar({ introComplete = true }) {
   const { dark, toggle } = useTheme()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', handler)
-    return () => window.removeEventListener('scroll', handler)
+    const onScroll = () => setScrolled(window.scrollY > 16)
+    onScroll()
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
     <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      initial={{ opacity: 0, y: -24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800'
+          ? 'border-b border-black/10 bg-white/78 backdrop-blur-xl dark:border-white/10 dark:bg-black/72'
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6">
         <a
           href="#"
-          className="font-heading font-extrabold text-xl tracking-tight text-neutral-900 dark:text-neutral-50"
+          aria-label="nkboateng home"
+          data-brand-logo
+          className={`font-brand text-[2.3rem] leading-none text-black transition duration-300 hover:text-accent dark:text-white dark:hover:text-accent-dark sm:text-[2.75rem] ${
+            introComplete ? 'opacity-100' : 'opacity-0'
+          }`}
         >
-          NKB<span className="text-sky-500">.</span>
+          nkboateng
         </a>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden items-center gap-7 md:flex">
           {NAV_LINKS.map(link => (
             <a
               key={link}
               href={`#${link.toLowerCase()}`}
-              className="text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors duration-200"
+              className="text-sm font-semibold text-neutral-600 transition-colors hover:text-accent dark:text-neutral-300 dark:hover:text-accent-dark"
             >
               {link}
             </a>
           ))}
           <button
+            type="button"
             onClick={toggle}
-            aria-label="Toggle theme"
-            className="p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors duration-200"
+            aria-label="Toggle dark mode"
+            className="grid h-10 w-10 place-items-center rounded-full border border-black/10 bg-white text-black transition hover:border-accent hover:text-accent dark:border-white/15 dark:bg-black dark:text-white dark:hover:border-accent-dark dark:hover:text-accent-dark"
           >
-            {dark ? <FiSun size={15} /> : <FiMoon size={15} />}
+            {dark ? <FiSun size={17} /> : <FiMoon size={17} />}
           </button>
         </div>
 
-        {/* Mobile controls */}
-        <div className="md:hidden flex items-center gap-2">
+        <div className="flex items-center gap-2 md:hidden">
           <button
+            type="button"
             onClick={toggle}
-            aria-label="Toggle theme"
-            className="p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400"
+            aria-label="Toggle dark mode"
+            className="grid h-10 w-10 place-items-center rounded-full border border-black/10 bg-white text-black dark:border-white/15 dark:bg-black dark:text-white"
           >
-            {dark ? <FiSun size={15} /> : <FiMoon size={15} />}
+            {dark ? <FiSun size={17} /> : <FiMoon size={17} />}
           </button>
           <button
-            onClick={() => setMenuOpen(m => !m)}
-            aria-label="Toggle menu"
-            className="p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400"
+            type="button"
+            onClick={() => setMenuOpen(value => !value)}
+            aria-label="Toggle navigation menu"
+            className="grid h-10 w-10 place-items-center rounded-full border border-black/10 bg-white text-black dark:border-white/15 dark:bg-black dark:text-white"
           >
-            {menuOpen ? <FiX size={17} /> : <FiMenu size={17} />}
+            {menuOpen ? <FiX size={18} /> : <FiMenu size={18} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden overflow-hidden bg-white/95 dark:bg-neutral-950/95 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800"
+            transition={{ duration: 0.22 }}
+            className="overflow-hidden border-t border-black/10 bg-white/95 backdrop-blur-xl dark:border-white/10 dark:bg-black/95 md:hidden"
           >
-            <div className="px-6 py-4 flex flex-col gap-1">
+            <div className="mx-auto flex max-w-6xl flex-col px-5 py-4">
               {NAV_LINKS.map(link => (
                 <a
                   key={link}
                   href={`#${link.toLowerCase()}`}
                   onClick={() => setMenuOpen(false)}
-                  className="py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                  className="py-3 text-sm font-semibold text-neutral-700 transition-colors hover:text-accent dark:text-neutral-200 dark:hover:text-accent-dark"
                 >
                   {link}
                 </a>
