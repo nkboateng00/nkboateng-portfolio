@@ -1,6 +1,9 @@
 node_modules
 dist
 .DS_Store
+.env
+.env.local
+.env.*.local
 *.local
 .local/
 .vercel
@@ -9,3 +12,4 @@ dist
 /Campusfix.png
 /De Keuken.png
 /Intellilearn.png
+/mnotify-points.png

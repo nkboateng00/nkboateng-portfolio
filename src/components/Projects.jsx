@@ -34,14 +34,14 @@ const projects = [
     linkLabel: 'Visit site',
   },
   {
-    title: 'SpotCheck',
+    title: 'mNotify Points System',
     description:
-      'A smart classroom availability agent using a Raspberry Pi 4 and GPT-4o-mini vision to detect room occupancy in real time. The goal is to help students find free classrooms quickly without walking from block to block.',
-    impact: 'Helping students find free classrooms in real time.',
-    tags: ['Raspberry Pi', 'Python', 'Flask', 'GPT-4o-mini'],
-    image: '/projects/spotcheck.svg',
-    link: 'https://github.com/nkboateng00/spotcheck',
-    linkLabel: 'View project',
+      'An internal points and rewards system built for mNotify, a Ghanaian bulk messaging company. Features an admin dashboard, points distribution tracking, leaderboards, activity feed, user management, and live email tracking.',
+    impact: 'Built for mNotify staff — live at pointing.mnotify.com',
+    tags: ['Laravel', 'PHP', 'MySQL'],
+    image: '/images/mnotify-points.png',
+    link: 'https://pointing.mnotify.com',
+    linkLabel: 'Visit site',
   },
 ]
 
