@@ -1,177 +1,234 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { FiGithub, FiLinkedin, FiMail, FiSend } from 'react-icons/fi'
+import { useEffect, useState } from 'react'
+import { EMAIL, PROFILE, SOCIALS } from '../data/me'
+import MagneticButton from './ui/MagneticButton'
+import { Lines, Reveal } from './ui/Reveal'
 
-const inputClass =
-  'w-full border border-black/10 bg-white px-4 py-3.5 text-sm font-medium text-black outline-none transition placeholder:text-neutral-400 focus:border-accent focus:ring-4 focus:ring-accent/10 dark:border-white/10 dark:bg-black dark:text-white dark:placeholder:text-neutral-600'
+// Set VITE_FORMSPREE_ENDPOINT (e.g. https://formspree.io/f/abcd1234) in .env to
+// receive messages directly. Without it, Send opens the visitor's email app instead.
+const RAW_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT
+const ENDPOINT = RAW_ENDPOINT && !RAW_ENDPOINT.includes('YOUR_FORM_ID') ? RAW_ENDPOINT : null
 
-const socials = [
-  { label: 'GitHub', href: 'https://github.com/nkboateng00', icon: FiGithub },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/nkboateng', icon: FiLinkedin },
+const FIELDS = [
+  { name: 'name', label: 'What’s your name?', placeholder: 'Ama Mensah *', required: true, autoComplete: 'name' },
+  {
+    name: 'email',
+    type: 'email',
+    inputMode: 'email',
+    label: 'What’s your email?',
+    placeholder: 'ama@brand.com *',
+    required: true,
+    autoComplete: 'email',
+  },
+  { name: 'company', label: 'What’s the name of your brand or company?', placeholder: 'Your brand', autoComplete: 'organization' },
+  { name: 'services', label: 'What are you looking for?', placeholder: 'Website, web app, automation…' },
+  { name: 'message', label: 'Your message', placeholder: 'Hi NK, can you help me with… *', required: true, textarea: true },
 ]
 
-const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT
-
-const sectionMotion = {
-  initial: { opacity: 0, y: 34 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.22 },
-  transition: { duration: 0.68, ease: [0.22, 1, 0.36, 1] },
+function mailtoHref(d) {
+  const body = [
+    d.message,
+    '',
+    `${d.name}${d.company ? `, ${d.company}` : ''}`,
+    d.email,
+    d.services ? `Looking for: ${d.services}` : null,
+  ]
+    .filter(line => line !== null)
+    .join('\r\n')
+  return `mailto:${EMAIL}?subject=${encodeURIComponent(`New project · ${d.company || d.name}`)}&body=${encodeURIComponent(body)}`
 }
 
-export default function Contact() {
-  const [formState, setFormState] = useState({ status: 'idle', message: '' })
-  const isSubmitting = formState.status === 'submitting'
+function useLocalTime(timeZone) {
+  const format = () =>
+    new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone, timeZoneName: 'short' }).format(
+      new Date(),
+    )
+  const [time, setTime] = useState(format)
+  useEffect(() => {
+    const t = window.setInterval(() => setTime(format()), 15000)
+    return () => window.clearInterval(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeZone])
+  return time
+}
 
-  async function handleSubmit(event) {
-    event.preventDefault()
+function Form() {
+  const [status, setStatus] = useState('idle') // idle | sending | sent | mailto | error
+  const [name, setName] = useState('')
 
-    if (!formspreeEndpoint) {
-      setFormState({
-        status: 'error',
-        message: 'Contact form is not connected yet. Email me directly for now.',
-      })
+  const onSubmit = async e => {
+    e.preventDefault()
+    const data = Object.fromEntries(new FormData(e.currentTarget))
+    setName(String(data.name).trim().split(' ')[0])
+    if (!ENDPOINT) {
+      window.location.href = mailtoHref(data)
+      setStatus('mailto')
       return
     }
-
-    const form = event.currentTarget
-    const formData = new FormData(form)
-
-    setFormState({ status: 'submitting', message: '' })
-
+    setStatus('sending')
     try {
-      const response = await fetch(formspreeEndpoint, {
+      const res = await fetch(ENDPOINT, {
         method: 'POST',
-        body: formData,
-        headers: {
-          Accept: 'application/json',
-        },
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       })
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => null)
-        const message =
-          data?.errors?.[0]?.message || 'Something went wrong. Please try again.'
-
-        throw new Error(message)
-      }
-
-      form.reset()
-      setFormState({
-        status: 'success',
-        message: 'Message sent. I will reply soon.',
-      })
-    } catch (error) {
-      setFormState({
-        status: 'error',
-        message: error.message || 'Something went wrong. Please try again.',
-      })
+      setStatus(res.ok ? 'sent' : 'error')
+    } catch {
+      setStatus('error')
     }
   }
 
-  return (
-    <motion.section
-      id="contact"
-      className="border-t border-black/10 bg-neutral-50 px-5 py-24 dark:border-white/10 dark:bg-neutral-950 sm:px-6"
-      {...sectionMotion}
-    >
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
-            Contact
-          </p>
-          <h2 className="font-heading text-4xl font-bold leading-tight text-black sm:text-5xl dark:text-white">
-            Get In Touch
-          </h2>
-          <p className="mt-6 text-lg text-neutral-700 dark:text-neutral-300">
-            I usually reply within 24 hours.
-          </p>
-          <a
-            href="mailto:nkboateng0@icloud.com"
-            className="mt-5 inline-flex items-center gap-2 text-base font-bold text-black transition hover:text-accent dark:text-white dark:hover:text-accent-dark"
-          >
-            <FiMail size={18} />
-            nkboateng0@icloud.com
-          </a>
-
-          <div className="mt-8 flex gap-3">
-            {socials.map(({ label, href, icon: Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="grid h-11 w-11 place-items-center border border-black/10 bg-white text-black transition hover:border-accent hover:bg-accent hover:text-white dark:border-white/10 dark:bg-black dark:text-white"
-              >
-                <Icon size={19} />
+  if (status === 'sent' || status === 'mailto') {
+    return (
+      <div role="status" className="border-t border-paper/15 pt-10">
+        <p className="text-statement">
+          {status === 'sent' ? `Thanks${name ? `, ${name}` : ''}. I’ll reply within a day.` : 'Your email app should now be open.'}
+        </p>
+        <p className="mt-4 max-w-md text-muted">
+          {status === 'sent' ? (
+            'Your message is in my inbox.'
+          ) : (
+            <>
+              Just press send. If nothing opened, write to{' '}
+              <a href={`mailto:${EMAIL}`} className="text-paper underline underline-offset-4">
+                {EMAIL}
               </a>
-            ))}
+              .
+            </>
+          )}
+        </p>
+        <button type="button" onClick={() => setStatus('idle')} className="press mt-8 text-muted underline underline-offset-4">
+          Send another message
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={onSubmit}>
+      {FIELDS.map((f, i) => {
+        const { label, textarea, ...input } = f
+        const Tag = textarea ? 'textarea' : 'input'
+        return (
+          <Reveal
+            as="label"
+            key={f.name}
+            delay={i * 60}
+            className="grid grid-cols-[2.75rem_1fr] border-t border-paper/15 pb-6 pt-8 transition-colors duration-200 focus-within:border-paper/60 sm:grid-cols-[4.5rem_1fr]"
+          >
+            <span className="label pt-2 tabular-nums">0{i + 1}</span>
+            <span>
+              <span className="block text-[1.375rem] font-medium tracking-[-0.02em]">{label}</span>
+              <Tag {...input} rows={textarea ? 4 : undefined} className={`field ${textarea ? 'resize-y' : ''}`} />
+            </span>
+          </Reveal>
+        )
+      })}
+
+      <div className="relative border-t border-paper/15">
+        {status === 'error' ? (
+          <p role="alert" className="pt-6 text-[#ff8a8a]">
+            That didn’t send. Please try again, or email {EMAIL}.
+          </p>
+        ) : null}
+        {/* Sits across the closing rule, like a seal on the form. */}
+        <div className="-mt-[4.5rem] flex justify-end pr-[6%] sm:-mt-20">
+          <MagneticButton>
+            <button
+              type="submit"
+              disabled={status === 'sending'}
+              className="btn-round h-36 w-36 bg-paper text-[1.0625rem] text-ink disabled:opacity-60 sm:h-40 sm:w-40"
+            >
+              <span>{status === 'sending' ? 'Sending…' : 'Send it'}</span>
+            </button>
+          </MagneticButton>
+        </div>
+      </div>
+    </form>
+  )
+}
+
+export default function Contact() {
+  const time = useLocalTime(PROFILE.timeZone)
+  const year = new Date().getFullYear()
+
+  return (
+    <footer id="contact" className="on-dark bg-ink">
+      <div className="page pt-28 md:pt-40">
+        <Lines as="h2" className="text-huge" stagger={120}>
+          <span className="flex items-center gap-5 md:gap-8">
+            <img
+              src="/images/me/nk-avatar.webp"
+              alt=""
+              width="320"
+              height="320"
+              loading="lazy"
+              className="h-[0.9em] w-[0.9em] rounded-full"
+            />
+            Let’s build
+          </span>
+          <span>something together</span>
+        </Lines>
+
+        <div className="mt-20 grid gap-20 md:mt-28 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-8">
+            <Form />
           </div>
+
+          <Reveal as="dl" delay={200} className="space-y-10 lg:col-span-3 lg:col-start-10 lg:pt-8">
+            <div>
+              <dt className="label">Contact details</dt>
+              <dd className="mt-4">
+                <a href={`mailto:${EMAIL}`} className="press inline-block underline-offset-4 hover:underline">
+                  {EMAIL}
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt className="label">Based in</dt>
+              <dd className="mt-4">
+                {PROFILE.city}, {PROFILE.country}
+                <br />
+                Working worldwide
+              </dd>
+            </div>
+            <div>
+              <dt className="label">Socials</dt>
+              <dd className="mt-4">
+                <ul className="space-y-1">
+                  {SOCIALS.map(s => (
+                    <li key={s.label}>
+                      <a
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="press inline-block underline-offset-4 hover:underline"
+                      >
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          </Reveal>
         </div>
 
-        <motion.form
-          initial={{ opacity: 0, y: 26 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={{ duration: 0.6, delay: 0.08 }}
-          action={formspreeEndpoint || '#'}
-          method="POST"
-          onSubmit={handleSubmit}
-          className="border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-black sm:p-7"
-        >
-          <input type="hidden" name="_subject" value="New portfolio message" />
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
-                Name
-              </span>
-              <input className={inputClass} type="text" name="name" required placeholder="Your name" />
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
-                Email
-              </span>
-              <input className={inputClass} type="email" name="email" required placeholder="you@example.com" />
-            </label>
-          </div>
-
-          <label className="mt-4 block">
-            <span className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
-              Message
-            </span>
-            <textarea
-              className={`${inputClass} min-h-40 resize-y`}
-              name="message"
-              required
-              placeholder="Tell me what you're building."
-            />
-          </label>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 bg-accent px-6 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#be123c] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
-          >
-            {isSubmitting ? 'Sending...' : 'Submit'}
-            <FiSend size={16} />
-          </button>
-
-          {formState.message ? (
-            <p
-              role="status"
-              className={`mt-4 text-sm font-semibold ${
-                formState.status === 'success'
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : 'text-accent dark:text-accent-dark'
-              }`}
-            >
-              {formState.message}
+        <div className="mt-28 flex flex-col gap-8 border-t border-paper/15 py-8 sm:flex-row sm:items-end sm:justify-between md:mt-40">
+          <div className="flex gap-12">
+            <p>
+              <span className="label block">©&nbsp;{year}</span>
+              <span className="mt-2 block">{PROFILE.name}</span>
             </p>
-          ) : null}
-        </motion.form>
+            <p>
+              <span className="label block">Local time</span>
+              <span className="mt-2 block tabular-nums">{time}</span>
+            </p>
+          </div>
+          <a href="#top" className="press text-muted hover:text-paper">
+            Back to top ↑
+          </a>
+        </div>
       </div>
-    </motion.section>
+    </footer>
   )
 }

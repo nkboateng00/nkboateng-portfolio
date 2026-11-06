@@ -1,37 +1,47 @@
-import { motion } from 'framer-motion'
-
-const sectionMotion = {
-  initial: { opacity: 0, y: 34 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.25 },
-  transition: { duration: 0.68, ease: [0.22, 1, 0.36, 1] },
-}
+import { bio, research, timeline } from '../data/story'
+import { Reveal, Words } from './ui/Reveal'
 
 export default function About() {
   return (
-    <motion.section id="about" className="px-5 py-24 sm:px-6" {...sectionMotion}>
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-        <div>
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">
-            About
-          </p>
-          <h2 className="font-heading text-4xl font-bold leading-tight text-black sm:text-5xl dark:text-white">
-            About Me
-          </h2>
+    <section id="about" className="scroll-mt-8 bg-[#f4f4f2] py-24 md:py-40">
+      <div className="page">
+        <div className="grid gap-12 md:grid-cols-12 md:gap-8">
+          <Words
+            as="h2"
+            text="From campus tools to brands across Accra."
+            stagger={50}
+            className="text-big text-balance md:col-span-7"
+          />
+          <Reveal delay={200} className="space-y-6 text-muted text-pretty md:col-span-4 md:col-start-9 md:pt-3">
+            {bio.map(p => (
+              <p key={p.slice(0, 24)}>{p}</p>
+            ))}
+          </Reveal>
         </div>
 
-        <div className="border-l-2 border-accent pl-6 sm:pl-8">
-          <p className="max-w-3xl text-lg leading-9 text-neutral-700 dark:text-neutral-300">
-            I'm a BSc Computer Science student at Lancaster University Ghana with a focus
-            on cybersecurity and software development. I build full-stack products that
-            solve real problems for real people. My work ranges from campus
-            management systems to AI-powered automation tools. I'm also a published
-            researcher — my paper on agentic AI for SME automation was accepted at iCAD
-            2026 at Anglia Ruskin University, Cambridge. I believe in writing clean code,
-            shipping working products, and continuously pushing what's possible.
+        <Reveal as="article" className="mt-24 border-t border-ink/15 pt-8 md:mt-36">
+          <p className="label">Published research</p>
+          <h3 className="mt-8 max-w-5xl text-statement text-balance">{research.title}</h3>
+          <p className="mt-6 text-muted">
+            {research.venue} · {research.dates}
           </p>
+        </Reveal>
+
+        <div className="mt-24 md:mt-36">
+          <Reveal as="h3" className="label pb-6">
+            The journey so far
+          </Reveal>
+          <ol className="border-b border-ink/15">
+            {timeline.map(t => (
+              <Reveal as="li" key={t.title} className="grid gap-2 border-t border-ink/15 py-7 md:grid-cols-12 md:gap-8">
+                <p className="text-muted tabular-nums md:col-span-2">{t.when}</p>
+                <p className="text-[1.375rem] font-medium leading-snug tracking-[-0.02em] md:col-span-5">{t.title}</p>
+                <p className="text-muted text-pretty md:col-span-5">{t.body}</p>
+              </Reveal>
+            ))}
+          </ol>
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }

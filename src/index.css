@@ -2,40 +2,334 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------------------------------------------ tokens */
 @layer base {
+  :root {
+    --paper: 255 255 255;
+    --ink: 28 29 32; /* #1C1D20 */
+    --night: 20 21 23; /* #141517, the darkest surface */
+    --stone: 137 141 142; /* #898D8E, hero backdrop behind the cut-out portrait */
+    --muted: 107 107 107; /* 5.3:1 on paper */
+    --accent: 69 92 233; /* #455CE9, 5.3:1 against white text */
+
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+    color-scheme: light;
+  }
+
+  /* Dark surfaces re-point the tokens so components work on either. */
+  .on-dark {
+    --muted: 154 154 154; /* 6:1 on ink */
+    color: rgb(var(--paper));
+  }
+
   html {
-    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    @apply antialiased bg-white text-neutral-950 dark:bg-black dark:text-white;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    @apply bg-paper font-sans text-ink antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    font-weight: 400;
+    letter-spacing: -0.011em; /* 17px body, as Apple sets it */
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    letter-spacing: 0;
+  ::selection {
+    background: rgb(var(--accent));
+    color: rgb(var(--paper));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 }
 
+/* -------------------------------------------------------------- components */
+@layer components {
+  .page {
+    @apply mx-auto w-full max-w-page px-5 sm:px-8 lg:px-14;
+  }
+
+  .label {
+    @apply text-label uppercase text-muted;
+  }
+
+  /* Every pressable thing answers on pointer-down. */
+  .press {
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 160ms var(--ease-out);
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
+
+  /*
+    Buttons fill with the accent from below on hover. The fill is a wide ellipse
+    parked under the button; hover slides it up until it covers every corner.
+    A transition (not keyframes) so a quick in-and-out reverses smoothly.
+  */
+  .fill {
+    @apply press relative isolate overflow-hidden;
+  }
+  .fill::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: -10%;
+    top: 100%;
+    width: 120%;
+    height: 200%;
+    border-radius: 50%;
+    background: rgb(var(--accent));
+    transition: transform 450ms var(--ease-out);
+  }
+  .fill > * {
+    transition: color 200ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .fill:hover::before {
+      transform: translateY(-75%);
+    }
+    .fill:hover > * {
+      color: rgb(var(--paper));
+    }
+  }
+
+  .btn-round {
+    @apply fill grid aspect-square place-items-center rounded-full bg-ink text-paper;
+  }
+
+  .btn-pill {
+    @apply fill inline-flex min-h-[3.5rem] items-center justify-center gap-2 rounded-full border px-8 text-base;
+    border-color: rgb(var(--ink) / 0.2);
+  }
+  .on-dark .btn-pill {
+    border-color: rgb(var(--paper) / 0.2);
+  }
+
+  /* Nav link: a small dot grows in underneath on hover and marks the current section. */
+  .nav-link {
+    @apply press relative inline-flex flex-col items-center px-3 py-2;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -0.15rem;
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0;
+    transform: scale(0.4);
+    transition: transform 200ms var(--ease-out), opacity 200ms var(--ease-out);
+  }
+  .nav-link[aria-current='true']::after {
+    opacity: 1;
+    transform: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nav-link:hover::after {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /*
+    Logo: "© Code by nk" becomes "© nkboateng" on hover. The track slides left by
+    the measured width of "Code by" (--shift, set in JS) so "nk" lands at the start
+    and "boateng" fades in after it; the © turns once. ease-in-out because the
+    text moves across the screen rather than entering it.
+  */
+  .logo {
+    @apply press inline-flex items-center gap-[0.3em] whitespace-nowrap;
+  }
+  .logo-c {
+    display: inline-block;
+    transition: transform 700ms var(--ease-in-out);
+  }
+  .logo-clip {
+    display: inline-flex;
+    overflow-x: clip;
+  }
+  .logo-track {
+    display: inline-flex;
+    transition: transform 500ms var(--ease-in-out);
+  }
+  .logo-code,
+  .logo-rest {
+    transition: opacity 300ms var(--ease-out);
+  }
+  .logo-rest {
+    opacity: 0;
+  }
+  .logo:focus-visible .logo-c {
+    transform: rotate(360deg);
+  }
+  .logo:focus-visible .logo-track {
+    transform: translateX(calc(var(--shift, 0px) * -1));
+  }
+  .logo:focus-visible .logo-code {
+    opacity: 0;
+  }
+  .logo:focus-visible .logo-rest {
+    opacity: 1;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .logo:hover .logo-c {
+      transform: rotate(360deg);
+    }
+    .logo:hover .logo-track {
+      transform: translateX(calc(var(--shift, 0px) * -1));
+    }
+    .logo:hover .logo-code {
+      opacity: 0;
+    }
+    .logo:hover .logo-rest {
+      opacity: 1;
+    }
+  }
+
+  /* Large, quiet form rows: numbered question, borderless answer. */
+  .field {
+    @apply w-full bg-transparent py-3 text-[1.375rem] tracking-[-0.01em] outline-none;
+  }
+  .field::placeholder {
+    color: rgb(var(--paper) / 0.3);
+  }
+}
+
+/* ------------------------------------------------------------------ reveals */
+@layer components {
+  /*
+    Scroll reveals. JS only flips [data-in] once (IntersectionObserver); the motion
+    is CSS so it stays smooth while the page is busy loading.
+
+    .reveal: the block materialises (fade, a short rise and a little blur clearing).
+    .mask / .mask-in: a word or line rises out of its own clipped box.
+  */
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 1.75rem, 0);
+    filter: blur(6px);
+    transition:
+      opacity 900ms var(--ease-out) var(--d, 0ms),
+      transform 1100ms var(--ease-out) var(--d, 0ms),
+      filter 900ms var(--ease-out) var(--d, 0ms);
+  }
+  .reveal[data-in] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    /* Room for descenders and accents, without changing the line box. */
+    padding: 0.08em 0 0.16em;
+    margin: -0.08em 0 -0.16em;
+  }
+  .mask-in {
+    display: inline-block;
+    transform: translate3d(0, 112%, 0);
+    transition: transform 1100ms var(--ease-out);
+    transition-delay: calc(var(--d, 0ms) + var(--i, 0) * var(--stagger, 35ms));
+  }
+  [data-in] .mask-in {
+    transform: none;
+  }
+
+  /* Frosted material for chrome that floats over content. */
+  .glass {
+    background: rgb(var(--ink) / 0.84);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+}
+
+/* --------------------------------------------------------------- utilities */
 @layer utilities {
-  .bg-grid-light {
-    background-image: linear-gradient(to right, #eeeeee 1px, transparent 1px),
-      linear-gradient(to bottom, #eeeeee 1px, transparent 1px);
-    background-size: 64px 64px;
-  }
-
-  .bg-grid-dark {
-    background-image: linear-gradient(to right, #262626 1px, transparent 1px),
-      linear-gradient(to bottom, #262626 1px, transparent 1px);
-    background-size: 64px 64px;
-  }
-
   .text-balance {
     text-wrap: balance;
   }
+  .text-pretty {
+    text-wrap: pretty;
+  }
 
-  .tilt-card {
-    transform-style: preserve-3d;
+  /* Monochrome brand logos, so a row of different marks reads as one set. */
+  .logo-mono {
+    filter: brightness(0);
+  }
+
+  /* Constant motion is linear; CSS keeps it smooth while the main thread is busy. */
+  .marquee {
+    animation: marquee var(--marquee-duration, 32s) linear infinite;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pause-on-hover:hover .marquee {
+      animation-play-state: paused;
+    }
+  }
+  /* Logos fade out at the edges instead of being cut off. */
+  .marquee-edge {
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Reduced motion: cross-fades instead of travel. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+  /* Keep the fade that orients; drop the travel and the blur. */
+  .reveal {
+    transform: none;
+    filter: none;
+    transition: opacity 400ms ease var(--d, 0ms);
+  }
+  .mask-in {
+    transform: none;
+    opacity: 0;
+    transition: opacity 400ms ease;
+  }
+  [data-in] .mask-in {
+    opacity: 1;
+  }
+  .press:active {
+    transform: none;
+  }
+  .fill::before,
+  .logo-c,
+  .logo-track {
+    transition: none;
+  }
+  .marquee-edge {
+    mask-image: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: rgb(var(--ink));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
