@@ -70,3 +70,15 @@ export function Lines({ as: Tag = 'div', delay = 0, stagger = 110, className = '
     </Tag>
   )
 }
+
+// An image that unmasks as it arrives: the frame opens from an inset to full
+// size while the picture settles from a slight zoom.
+export function ImageReveal({ src, alt = '', className = '', imgClassName = '', ...rest }) {
+  const ref = useRef(null)
+  const inView = useInViewOnce(ref, { margin: '0px 0px -8% 0px' })
+  return (
+    <div ref={ref} data-in={inView || undefined} className={`clip-reveal ${className}`} {...rest}>
+      <img src={src} alt={alt} loading="lazy" decoding="async" className={imgClassName} />
+    </div>
+  )
+}

@@ -1,16 +1,20 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
 import { SOCIALS } from '../data/me'
 import { useActiveSection, useMediaQuery, useScrolledPast } from '../lib/hooks'
 import { EASE_DRAWER, EASE_OUT } from '../lib/motion'
 import MagneticButton from './ui/MagneticButton'
+import SiteLink from './ui/SiteLink'
 
 const LINKS = [
-  { id: 'work', label: 'Work' },
-  { id: 'about', label: 'About' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'work', label: 'Work', to: '/work' },
+  { id: 'about', label: 'About', to: '/#about' },
+  { id: 'contact', label: 'Contact', to: '#contact' },
 ]
 const IDS = LINKS.map(l => l.id)
+const EMPTY = []
+const MENU = [{ id: 'top', label: 'Home', to: '/#top' }, ...LINKS]
 
 // The drawer enters on the iOS sheet curve and leaves the way it came, faster.
 // Its links follow it in, one after another, so the eye reads them top to bottom.
@@ -45,7 +49,7 @@ function Logo() {
   }, [])
 
   return (
-    <a href="#top" className="logo -ml-1 px-1 py-2 text-[1.0625rem] font-medium">
+    <SiteLink to="/#top" aria-label="nkboateng, home" className="logo -ml-1 px-1 py-2 text-[1.0625rem] font-medium">
       <span aria-hidden="true" className="logo-c">
         ©
       </span>
@@ -58,12 +62,15 @@ function Logo() {
           <span className="logo-rest">boateng</span>
         </span>
       </span>
-    </a>
+    </SiteLink>
   )
 }
 
 export default function Navbar() {
-  const active = useActiveSection(IDS)
+  const { pathname } = useLocation()
+  const section = useActiveSection(pathname === '/' ? IDS : EMPTY)
+  // On the work page, "Work" is where you are; at home, follow the section in view.
+  const active = pathname.startsWith('/work') ? 'work' : section
   const wide = useMediaQuery('(min-width: 768px)')
   const touch = useMediaQuery('(pointer: coarse)')
   const past = useScrolledPast(160)
@@ -103,13 +110,13 @@ export default function Navbar() {
           <ul className="hidden items-center gap-2 md:flex">
             {LINKS.map(link => (
               <li key={link.id}>
-                <a
-                  href={`#${link.id}`}
+                <SiteLink
+                  to={link.to}
                   className="nav-link text-[1.0625rem]"
                   aria-current={active === link.id ? 'true' : undefined}
                 >
                   {link.label}
-                </a>
+                </SiteLink>
               </li>
             ))}
           </ul>
@@ -187,13 +194,13 @@ export default function Navbar() {
                   Navigation
                 </motion.p>
                 <ul className="mt-8 space-y-1">
-                  {[{ id: 'top', label: 'Home' }, ...LINKS].map((link, i) => (
+                  {MENU.map((link, i) => (
                     <motion.li key={link.id} variants={item}>
-                      <a
+                      <SiteLink
                         ref={i === 0 ? firstLinkRef : undefined}
-                        href={`#${link.id}`}
+                        to={link.to}
                         onClick={() => setOpen(false)}
-                        className="press group flex items-center gap-5 py-1 text-[clamp(2.5rem,6vw,3.5rem)] leading-tight tracking-[-0.03em]"
+                        className="press group flex items-center gap-5 py-1 text-[clamp(2.5rem,6vw,3.5rem)] font-medium leading-tight tracking-[-0.035em]"
                       >
                         <span
                           aria-hidden="true"
@@ -202,7 +209,7 @@ export default function Navbar() {
                           }`}
                         />
                         {link.label}
-                      </a>
+                      </SiteLink>
                     </motion.li>
                   ))}
                 </ul>

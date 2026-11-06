@@ -148,7 +148,7 @@ export default function Hero() {
       </h1>
 
       {/* Faint working vocabulary of each side, behind the portrait. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden select-none text-ink/[0.14] md:block">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden select-none text-ink/[0.14] desk:block">
         <motion.div style={{ opacity: designerOpacity }} className="absolute inset-0">
           {DESIGN_TOKENS.map((t, i) => (
             <Reveal key={t.text} delay={1100 + i * 90} className={`absolute flex items-center gap-2 ${t.className}`}>
@@ -168,7 +168,7 @@ export default function Hero() {
 
       {/* Portrait */}
       <div className="absolute inset-0 flex items-end justify-center">
-        <motion.div style={{ y: portraitY }} className="w-[min(132vw,36rem)] shrink-0 md:h-[72%] md:w-auto">
+        <motion.div style={{ y: portraitY }} className="w-[min(132vw,46rem,68svh)] shrink-0 desk:h-[min(72%,56vw)] desk:w-auto">
           <motion.div
             ref={portraitRef}
             initial={{ opacity: 0, y: 48 }}
@@ -178,7 +178,7 @@ export default function Hero() {
             onPointerMove={onMove}
             onPointerUp={onUp}
             onPointerCancel={onUp}
-            className="relative aspect-[680/620] w-full touch-pan-y select-none md:h-full md:w-auto"
+            className="relative aspect-[680/620] w-full touch-pan-y select-none desk:h-full desk:w-auto"
           >
             <img
               src={PORTRAIT}
@@ -202,30 +202,30 @@ export default function Hero() {
       {/* Labels */}
       <motion.div
         style={{ y: copyY }}
-        className="page pointer-events-none absolute inset-x-0 top-[18%] z-10 flex flex-col gap-3 md:top-[31%] md:flex-row md:justify-between"
+        className="page pointer-events-none absolute inset-x-0 top-[18%] z-10 flex flex-col gap-3 md:top-[16%] desk:top-[31%] desk:flex-row desk:justify-between"
       >
         <motion.div style={{ opacity: designerOpacity }}>
           <Lines as="p" delay={250} className="text-hero">
             <span>designer</span>
           </Lines>
-          <Reveal as="p" delay={650} className="mt-5 hidden max-w-[19rem] text-lead text-muted text-pretty sm:block">
+          <Reveal as="p" delay={650} className="mt-5 hidden max-w-[19rem] text-lead text-muted text-pretty desk:block">
             Designer crafting clean, considered interfaces and brands that feel right.
           </Reveal>
         </motion.div>
-        <motion.div style={{ opacity: developerOpacity }} className="self-end md:self-auto">
+        <motion.div style={{ opacity: developerOpacity }} className="self-end desk:self-auto">
           <Lines as="p" delay={380} className="text-hero">
             <span>
               <span className="font-light text-accent">&lt;</span>developer<span className="font-light text-accent">&gt;</span>
             </span>
           </Lines>
-          <Reveal as="p" delay={780} className="mt-5 hidden max-w-[19rem] text-lead text-muted text-pretty sm:block">
+          <Reveal as="p" delay={780} className="mt-5 hidden max-w-[19rem] text-lead text-muted text-pretty desk:block">
             Developer who writes clean, fast and reliable code, from the first pixel to the server.
           </Reveal>
         </motion.div>
       </motion.div>
 
       {/* Corners */}
-      <div className="page pointer-events-none absolute inset-x-0 bottom-0 hidden justify-between pb-8 text-[0.9375rem] text-muted md:flex">
+      <div className="page pointer-events-none absolute inset-x-0 bottom-0 hidden justify-between pb-8 text-[0.9375rem] text-muted desk:flex">
         <Reveal delay={1300}>
           Freelance · {PROFILE.city}, {PROFILE.country}
         </Reveal>

@@ -251,6 +251,22 @@
     transform: none;
   }
 
+  .clip-reveal {
+    overflow: hidden;
+    clip-path: inset(8% 6% 8% 6% round 1.5rem);
+    transition: clip-path 1400ms var(--ease-out);
+  }
+  .clip-reveal > img {
+    transform: scale(1.12);
+    transition: transform 1600ms var(--ease-out);
+  }
+  .clip-reveal[data-in] {
+    clip-path: inset(0 0 0 0 round 1.25rem);
+  }
+  .clip-reveal[data-in] > img {
+    transform: none;
+  }
+
   /* Frosted material for chrome that floats over content. */
   .glass {
     background: rgb(var(--ink) / 0.84);
@@ -323,6 +339,18 @@
   }
   .marquee-edge {
     mask-image: none;
+  }
+  .clip-reveal,
+  .clip-reveal > img {
+    transition: opacity 400ms ease;
+    transform: none;
+  }
+  .clip-reveal {
+    clip-path: inset(0 0 0 0 round 1.25rem);
+    opacity: 0;
+  }
+  .clip-reveal[data-in] {
+    opacity: 1;
   }
 }
 

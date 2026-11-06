@@ -20,7 +20,7 @@ const FIELDS = [
     autoComplete: 'email',
   },
   { name: 'company', label: 'What’s the name of your brand or company?', placeholder: 'Your brand', autoComplete: 'organization' },
-  { name: 'services', label: 'What are you looking for?', placeholder: 'Website, web app, automation…' },
+  { name: 'services', label: 'What are you looking for?', placeholder: 'Website, app, automation…' },
   { name: 'message', label: 'Your message', placeholder: 'Hi NK, can you help me with… *', required: true, textarea: true },
 ]
 

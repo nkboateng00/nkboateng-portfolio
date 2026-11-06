@@ -35,6 +35,11 @@ export default {
         lead: ['clamp(1.0625rem, 1.3vw, 1.3125rem)', { lineHeight: '1.45', letterSpacing: '-0.012em' }],
         label: ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.06em', fontWeight: '500' }],
       },
+      screens: {
+        // Wide *and* landscape: where the hero can put the labels beside the face.
+        // Tall screens (a portrait iPad Pro is 1024px wide) keep the stacked layout.
+        desk: { raw: '(min-width: 1024px) and (min-aspect-ratio: 5/4)' },
+      },
       maxWidth: {
         page: '90rem',
       },

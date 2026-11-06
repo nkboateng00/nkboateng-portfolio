@@ -8,7 +8,7 @@ export default function Intro() {
         as="p"
         stagger={18}
         className="text-statement text-balance md:col-span-8"
-        text="Helping brands in Ghana and beyond look world-class online. Websites and software, designed and built by one person who cares about every detail, from the first sketch to launch day."
+        text="Helping brands in Ghana and beyond look world-class online. Websites, web apps and mobile apps, designed and built by one person who cares about every detail, from the first sketch to launch day."
       />
       <div className="flex flex-col items-start gap-14 md:col-span-4 md:pl-6 md:pt-2">
         <Reveal as="p" delay={250} className="max-w-xs text-muted text-pretty">

@@ -4,12 +4,15 @@ import { projects } from '../data/projects'
 import { useMediaQuery } from '../lib/hooks'
 import { follow, followLoose } from '../lib/motion'
 import { Reveal, Words } from './ui/Reveal'
+import MagneticButton from './ui/MagneticButton'
+import SiteLink from './ui/SiteLink'
 
 /*
   Desktop: a list of titles. Hovering a row shows a preview that follows the
   cursor on a spring; moving between rows slides the image strip instead of
   swapping images, so the preview reads as one object.
   Touch: each row simply shows its screenshot.
+  Rows open the project's write-up on /work.
 */
 function Preview({ index, x, y, lagX, lagY }) {
   const visible = index !== null
@@ -41,7 +44,7 @@ function Preview({ index, x, y, lagX, lagY }) {
             visible ? 'scale-100 opacity-100' : 'scale-[0.6] opacity-0'
           }`}
         >
-          View
+          Read
         </span>
       </motion.div>
     </>
@@ -83,12 +86,10 @@ export default function Work() {
       >
         {projects.map((p, i) => (
           <Reveal as="li" key={p.slug}>
-            <a
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
+            <SiteLink
+              to={`/work#${p.slug}`}
               onPointerEnter={() => hover && setIndex(i)}
-              className="group grid items-baseline gap-y-3 border-t border-ink/15 py-10 md:grid-cols-12 md:px-[3%] md:py-14"
+              className="group grid items-baseline gap-y-3 border-t border-ink/15 py-9 md:grid-cols-12 md:px-[3%] md:py-14"
             >
               <img
                 src={p.image}
@@ -102,17 +103,31 @@ export default function Work() {
                 text={p.title}
                 delay={80}
                 stagger={45}
-                className="text-big transition-[transform,opacity] duration-300 ease-out group-hover:-translate-x-3 group-hover:opacity-50 md:col-span-8"
+                className="text-big transition-[transform,opacity] duration-300 ease-out group-hover:-translate-x-3 group-hover:opacity-50 md:col-span-7"
               />
-              <p className="flex justify-between gap-4 text-muted transition-[transform,opacity] duration-300 ease-out group-hover:translate-x-3 group-hover:opacity-50 md:col-span-4 md:justify-end md:gap-10">
-                <span>{p.role}</span>
-                <span className="tabular-nums">{p.year}</span>
-              </p>
-              <span className="sr-only">(opens {p.title} in a new tab)</span>
-            </a>
+              <div className="text-muted transition-[transform,opacity] duration-300 ease-out group-hover:translate-x-3 group-hover:opacity-50 md:col-span-5 md:text-right">
+                <p className="flex justify-between gap-4 md:justify-end md:gap-10">
+                  <span>{p.role}</span>
+                  <span className="tabular-nums">{p.year}</span>
+                </p>
+                <p className="mt-2 text-[0.9375rem] text-ink/45">
+                  <span className="sr-only">Built with </span>
+                  {p.stack.slice(0, 4).join(' · ')}
+                </p>
+              </div>
+            </SiteLink>
           </Reveal>
         ))}
       </ul>
+
+      <Reveal className="mt-14 flex justify-center md:mt-20">
+        <MagneticButton>
+          <SiteLink to="/work" className="btn-pill">
+            <span>See all work in detail</span>
+            <span aria-hidden="true">→</span>
+          </SiteLink>
+        </MagneticButton>
+      </Reveal>
 
       {hover ? <Preview index={index} x={x} y={y} lagX={lagX} lagY={lagY} /> : null}
     </section>
