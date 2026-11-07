@@ -3,7 +3,7 @@ import MagneticButton from './ui/MagneticButton'
 
 export default function Intro() {
   return (
-    <section aria-label="Introduction" className="page grid gap-12 py-24 md:grid-cols-12 md:gap-8 md:py-40">
+    <section aria-label="Introduction" className="page grid gap-12 pb-14 pt-24 md:grid-cols-12 md:gap-8 md:py-40">
       <Words
         as="p"
         stagger={18}
